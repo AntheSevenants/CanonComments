@@ -3,7 +3,6 @@ library(lme4)
 library(effects)
 library(dplyr)
 library(lmerTest)
-library(Matrix)
 Sys.setenv(JAVA_HOME = "C:/Program Files (x86)/Java/jre-1.8/")
 
 options(scipen = 10)
@@ -23,23 +22,23 @@ WN$Lemmata <- as.character(WN$Words)
 str(WN)
 ER$Lemmata <- as.character(ER$lemma)
 
-LH$ResponseID <- as.character(LH$response_id)
+LH$ResponseId <- as.character(LH$response_id)
 DA$ResponseId <- as.character(DA$ResponseId)
 # merging the dataframe
 LH <- left_join(ER, WN, by = "Lemmata")
 LHT2 <- left_join(LH, DA, by = "ResponseId")
-str(LH)
+str(LHT)
 
 summary(LH$M.V)
 
 nrow(LH) - 374892
 
-LHT <- filter(LH, !is.na(M.V))
+LHT <- filter(LHT2, !is.na(M.V))
 str(LHT)
 
 summary(lm_value <- lm(M.V ~ Grammatical.category, data=LH))
 
-lmer_value <- lmer(M.V ~ Grammatical.category + (1|response_id), data = LHT)
+lmer_value <- lmer(M.V ~ Pos + (1|QPERS_GENDER), data = LHT)
 plot(allEffects(lmer_value))
 
 remove.packages('lme4', 'C:/Users/lean/AppData/Local/R/win-library/4.3')
