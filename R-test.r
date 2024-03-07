@@ -38,10 +38,7 @@ str(LHT)
 
 summary(lm_value <- lm(M.V ~ Grammatical.category, data=LH))
 
-lmer_value <- lmer(M.V ~ Pos + (1|QPERS_GENDER), data = LHT)
+lmer_value <- lmer(M.V ~ pos + (1|QPERS_GENDER), data = LHT)
 plot(allEffects(lmer_value))
 
-remove.packages('lme4', 'C:/Users/lean/AppData/Local/R/win-library/4.3')
-install.packages('lme4')
 
-install.packages("lme4", type = "source")
