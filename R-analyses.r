@@ -4,7 +4,6 @@ library(Matrix)
 library(effects)
 library(dplyr)
 library(lmerTest)
-library(ggplot2)
 library(officer)
 library(flextable)
 
@@ -15,13 +14,25 @@ LHT <- read.csv("sorted_data/Combined_Ratings-NEW.csv", header = TRUE,
 
 ## algemene modellen
 # leeftijdmodellen
-Age <- lmer(Surprise ~ QPERS_AGE + (1 | response_id)
+Age <- lmer(Valence ~ QPERS_AGE + (1 | response_id)
             + (1 | questions), data = LHT)
 summary(Age)
 eff <- effect("QPERS_AGE", Age)
-plot(eff, multiline = TRUE)
+eff_data <- as.data.frame(eff)
+#visualisatie
+plot(eff_data$QPERS_AGE, eff_data$fit, type = "l",
+     col = "orange", lwd = 2,
+     main = "Effect van leeftijd op valentie",
+     xlab = "leeftijd", ylab = "valentie",
+     xlim = range(eff_data$QPERS_AGE),
+     ylim = range(c(eff_data$lower, eff_data$upper)))
+polygon(c(eff_data$QPERS_AGE, rev(eff_data$QPERS_AGE)),
+        c(eff_data$lower, rev(eff_data$upper)),
+        col = rgb(1, 0.5, 0, 0.2), border = NA)
+rug(eff_data$QPERS_AGE, col = "orange")
+grid(col = "grey", lty = "dotted")
 
-# filteren op leeftijd
+# filteren op gender
 LHT_filtered_gender <- LHT %>% filter(QPERS_GENDER %in% c("Man", "Vrouw"))
 Gender <- lmer(Happiness ~ QPERS_GENDER + (1 | response_id) + (1 | questions),
                 data = LHT_filtered_gender)
